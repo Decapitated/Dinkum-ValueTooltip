@@ -15,6 +15,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Reference Include="DivineDinkum">
+			<HintPath>D:\Programs\Steam\steamapps\common\Dinkum\Plugins\DivineDinkum.dll</HintPath>
+		</Reference>
 		<Reference Include="AmplifyImpostors">
 			<HintPath>D:\Programs\Steam\steamapps\common\Dinkum\Dinkum_Data\Managed\AmplifyImpostors.dll</HintPath>
 		</Reference>
@@ -427,6 +430,7 @@
 
 	<ItemGroup>
 		<Compile Include="Core.cs" />
+		<Compile Include="Patches\Inventory.cs" />
 	</ItemGroup>
 	
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
