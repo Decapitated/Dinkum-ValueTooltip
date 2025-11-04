@@ -1,9 +1,6 @@
 ﻿using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
-using static MelonLoader.MelonLogger;
+using static GiveNPC;
 
 namespace ValueTooltipMod.Patches
 {
@@ -12,67 +9,77 @@ namespace ValueTooltipMod.Patches
     {
         [HarmonyPatch(typeof(Inventory), "fillHoverDescription")]
         [HarmonyPostfix]
-        private static void fillHoverDescription(ref Inventory __instance, ref InventorySlot rollOverSlot)
+        private static void FillHoverDescription(ref InventorySlot rollOverSlot)
         {
-            InventoryItem itemInSlot = rollOverSlot.itemInSlot;
-            string description = GetDescription(itemInSlot);
-            int num = CalculateValues(rollOverSlot);
-            if (num != -1)
-            {
-                __instance.InvDescriptionText.text = description + GetDisplayString(num);
-                num = 0;
-            }
+            int value = CalculateValues(rollOverSlot);
+            Core.Instance.valueText.text = $"<sprite=11>{value}";
         }
 
-        public static int CalculateValues(InventorySlot slot)
+        // Altered version of GiveNPC.getDollarValueOfGiveSlots()
+        public static int CalculateValues(InventorySlot inventorySlot)
         {
-            GiveNPC give = GiveNPC.give;
-            int num = 0;
-            InventoryItem itemInSlot = slot.itemInSlot;
-            if (itemInSlot.isDeed || itemInSlot.getItemId() == Inventory.Instance.moneyItem.getItemId())
+            int moneyOffer = 0;
+            if (inventorySlot.itemNo == -1)
             {
                 return -1;
             }
-            num = ((itemInSlot.isStackable && !itemInSlot.isATool && !itemInSlot.isPowerTool && !itemInSlot.hasFuel) ? (itemInSlot.value * slot.stack) : itemInSlot.value);
-            if (!slot.isDisabledForGive() && give.giveWindowOpen)
+            if (inventorySlot.itemInSlot.hasFuel || inventorySlot.itemInSlot.hasColourVariation)
             {
-                switch (give.giveMenuTypeOpen)
+                moneyOffer += inventorySlot.itemInSlot.value;
+            }
+            else if (inventorySlot.getGiveAmount() == 0)
+            {
+                if (GiveNPC.give.giveMenuTypeOpen == currentlyGivingTo.Sell && (bool)inventorySlot.itemInSlot.relic)
                 {
-                    case GiveNPC.currentlyGivingTo.SellToTuckshop:
-                    case GiveNPC.currentlyGivingTo.SellToBugComp:
-                    case GiveNPC.currentlyGivingTo.SellToFishingComp:
-                        num = Mathf.RoundToInt((float)num * 2.5f);
-                        break;
-                    case GiveNPC.currentlyGivingTo.SellToTrapper:
-                        num = Mathf.RoundToInt((float)num * 2f);
-                        break;
-                    case GiveNPC.currentlyGivingTo.SellToJimmy:
-                        num = Mathf.RoundToInt((float)num * 1.5f);
-                        break;
-                    case GiveNPC.currentlyGivingTo.Tech:
-                        num = Mathf.RoundToInt((float)num * 6f);
-                        break;
-                    case GiveNPC.currentlyGivingTo.Sell:
-                        if ((bool)itemInSlot.relic)
-                        {
-                            num /= 4;
-                        }
-                        break;
+                    moneyOffer += inventorySlot.itemInSlot.value * inventorySlot.stack / 4;
+                }
+                else
+                {
+                    moneyOffer += inventorySlot.itemInSlot.value * inventorySlot.stack;
                 }
             }
-            num += Mathf.RoundToInt((float)num / 20f * (float)LicenceManager.manage.allLicences[8].getCurrentLevel());
-            return num;
-        }
-
-        public static string GetDescription(InventoryItem item)
-        {
-            Inventory instance = Inventory.Instance;
-            return item.getItemDescription(instance.getInvItemId(item));
-        }
-
-        public static string GetDisplayString(int value)
-        {
-            return $"\n <sprite=11>{value}";
+            else if (GiveNPC.give.giveMenuTypeOpen == currentlyGivingTo.Sell && (bool)inventorySlot.itemInSlot.relic)
+            {
+                moneyOffer += inventorySlot.itemInSlot.value * inventorySlot.getGiveAmount() / 4;
+            }
+            else
+            {
+                moneyOffer += inventorySlot.itemInSlot.value * inventorySlot.getGiveAmount();
+            }
+            moneyOffer += Mathf.RoundToInt((float)moneyOffer / 20f * (float)LicenceManager.manage.allLicences[8].getCurrentLevel());
+            if (GiveNPC.give.giveMenuTypeOpen == currentlyGivingTo.SellToBugComp)
+            {
+                moneyOffer = Mathf.RoundToInt((float)moneyOffer * 2.5f);
+            }
+            else if (GiveNPC.give.giveMenuTypeOpen == currentlyGivingTo.SellToFishingComp)
+            {
+                moneyOffer = Mathf.RoundToInt((float)moneyOffer * 2.5f);
+            }
+            else if (GiveNPC.give.giveMenuTypeOpen == currentlyGivingTo.SellToTuckshop)
+            {
+                moneyOffer = Mathf.RoundToInt((float)moneyOffer * 2.5f);
+            }
+            else if (GiveNPC.give.giveMenuTypeOpen == currentlyGivingTo.SellToTrapper)
+            {
+                moneyOffer = Mathf.RoundToInt((float)moneyOffer * 2f);
+            }
+            else if (GiveNPC.give.giveMenuTypeOpen == currentlyGivingTo.SellToJimmy)
+            {
+                moneyOffer = Mathf.RoundToInt((float)moneyOffer * 1.5f);
+            }
+            else if (GiveNPC.give.giveMenuTypeOpen == currentlyGivingTo.Tech)
+            {
+                moneyOffer = Mathf.RoundToInt((float)moneyOffer * 6f);
+            }
+            if (moneyOffer <= -1)
+            {
+                moneyOffer *= -1;
+            }
+            if (moneyOffer > BankMenu.billion)
+            {
+                moneyOffer = BankMenu.billion;
+            }
+            return moneyOffer;
         }
     }
 }
