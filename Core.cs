@@ -34,7 +34,8 @@ namespace ValueTooltipMod
 
         //private IEnumerator LoadAssets(Action success)
         //{
-        //    yield return Utilities.LoadAssetBundle("valuetooltip", (bundle) => {
+        //    yield return Utilities.LoadAssetBundle("valuetooltip", (bundle) =>
+        //    {
         //        assetBundle = bundle;
         //    });
 
@@ -59,10 +60,9 @@ namespace ValueTooltipMod
 
         private IEnumerator Setup()
         {
-
             var layoutObj = new GameObject()
             {
-                name = "Value Text"
+                name = "Value Details"
             };
             var layout = layoutObj.AddComponent<HorizontalLayoutGroup>();
             layout.childControlWidth = false;
@@ -71,10 +71,19 @@ namespace ValueTooltipMod
             layout.childForceExpandWidth = true;
             layout.childAlignment = TextAnchor.MiddleLeft;
 
+            var sprites = Resources.FindObjectsOfTypeAll<Sprite>();
+            var sprite = Array.Find(sprites, (s) => s.name == "smallCurveUI");
+
+            var image = layoutObj.AddComponent<Image>();
+            image.sprite = sprite;
+            image.type = Image.Type.Sliced;
+            image.color = new Color(255f, 215f, 0f);
+
             var textObj = new GameObject()
             {
                 name = "Text"
             };
+
             valueText = textObj.AddComponent<TextMeshProUGUI>();
             valueText.text = "<sprite=11>999999999";
             valueText.fontSize = 24;
