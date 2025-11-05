@@ -430,7 +430,7 @@
 
 	<ItemGroup>
 		<Compile Include="Core.cs" />
-		<Compile Include="Patches\Inventory.cs" />
+		<Compile Include="Patches\Inventory_FillHoverDescription.cs" />
 	</ItemGroup>
 	
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
