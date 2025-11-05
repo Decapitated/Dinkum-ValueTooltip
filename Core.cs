@@ -33,7 +33,7 @@ namespace ValueTooltipMod
             };
 
             valueText = textObj.AddComponent<TextMeshProUGUI>();
-            valueText.fontSize = 18;
+            valueText.fontSize = 24;
             valueText.color = new Color(0.4057f, 0.3395f, 0.2392f);
 
             var rect = textObj.GetComponent<RectTransform>();
@@ -42,6 +42,7 @@ namespace ValueTooltipMod
             var invDesc = DivineDinkum.Core.Instance.InventoryDescriptions;
             textObj.transform.SetParent(invDesc.transform);
             textObj.SetActive(true);
+
             return null;
         }
     }
