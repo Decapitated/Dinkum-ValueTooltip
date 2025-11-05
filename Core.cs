@@ -65,9 +65,7 @@ namespace ValueTooltipMod
 
             textObj.transform.SetParent(layoutObj.transform);
             #endregion
-            var invDesc = DivineDinkum.Core.Instance.InventoryDescriptions;
-            //yield return new WaitUntil(() =>
-            //    DivineDinkum.Core.Instance.InventoryDescriptions != null && DivineDinkum.Core.Instance.InventoryDescriptions.activeInHierarchy);
+            var invDesc = DivineDinkum.CursorCanvas.Instance.InventoryDescriptions;
             layoutObj.transform.SetParent(invDesc.transform);
             layoutObj.SetActive(true);
 
