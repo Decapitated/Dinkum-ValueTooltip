@@ -38,7 +38,7 @@ namespace ValueTooltipMod
             textObj.transform.SetParent(invDesc.transform);
             textObj.SetActive(true);
 
-            return null;
+            yield break;
         }
     }
 }
