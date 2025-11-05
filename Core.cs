@@ -17,12 +17,7 @@ namespace ValueTooltipMod
         public override void OnInitializeMelon()
         {
             Instance = this;
-            DivineDinkum.Core.Instance.OnSceneReady.AddListener(OnSceneReady);
-        }
-
-        private void OnSceneReady()
-        {
-            MelonCoroutines.Start(Setup());
+            DivineDinkum.Core.Instance.OnSceneReady.Subscribe(() => MelonCoroutines.Start(Setup()));
         }
 
         private IEnumerator Setup()
