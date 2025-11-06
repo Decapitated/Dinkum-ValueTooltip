@@ -14,6 +14,7 @@ namespace ValueTooltipMod
         static public Core Instance;
 
         internal TextMeshProUGUI valueText;
+        internal TextMeshProUGUI sellValueText;
 
         public override void OnInitializeMelon()
         {
@@ -22,6 +23,13 @@ namespace ValueTooltipMod
         }
 
         private IEnumerator Setup()
+        {
+            MelonCoroutines.Start(SetupTooltip());
+            MelonCoroutines.Start(SetupSellValue());
+            yield break;
+        }
+
+        private IEnumerator SetupTooltip()
         {
             #region Root
             var layoutObj = new GameObject()
@@ -65,9 +73,56 @@ namespace ValueTooltipMod
 
             textObj.transform.SetParent(layoutObj.transform);
             #endregion
+
             var invDesc = DivineDinkum.CursorCanvas.Instance.InventoryDescriptions;
             layoutObj.transform.SetParent(invDesc.transform);
             layoutObj.SetActive(true);
+
+            yield break;
+        }
+        
+        private IEnumerator SetupSellValue()
+        {
+            #region Root
+            var layoutObj = new GameObject()
+            {
+                name = "SellValue"
+            };
+
+            var layout = layoutObj.AddComponent<HorizontalLayoutGroup>();
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = false;
+            layout.childForceExpandHeight = false;
+            layout.childAlignment = TextAnchor.MiddleCenter;
+
+            var layoutRect = layoutObj.GetComponent<RectTransform>();
+            layoutRect.pivot = new Vector2(0.5f, 1f);
+            layoutRect.anchorMin = new Vector2(0.5f, 0f);
+            layoutRect.anchorMax = new Vector2(0.5f, 0f);
+            layoutRect.sizeDelta = new Vector2(500f, 50f);
+            layoutRect.anchoredPosition = Vector2.zero;
+
+            var giveWindow = DivineDinkum.Canvas.Instance.GiveNPCWindow;
+            layoutObj.transform.SetParent(giveWindow.transform, false);
+            #endregion
+            #region Text
+            var textObj = new GameObject()
+            {
+                name = "Text"
+            };
+
+            sellValueText = textObj.AddComponent<TextMeshProUGUI>();
+            sellValueText.fontSize = 32;
+            sellValueText.color = Color.white;
+            sellValueText.text = "<size=80%><sprite=11> <size=100%>0";
+            sellValueText.textWrappingMode = TextWrappingModes.NoWrap;
+
+            var textRect = textObj.GetComponent<RectTransform>();
+            textRect.pivot = new Vector2(0.5f, 0.5f);
+
+            textObj.transform.SetParent(layoutObj.transform);
+            #endregion
 
             yield break;
         }
