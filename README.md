@@ -1,6 +1,6 @@
 # Dinkum Value Tooltip
 
-A mod that adds the ability to see the value of items in the inventory. As well, the ability to see the total value of selected items in the sell menu.
+A mod that adds the ability to see the value of items in the inventory. And, the ability to see the total value of selected items in the sell menu.
 
 ## Requirements
 - Dinkum v1.0.7
